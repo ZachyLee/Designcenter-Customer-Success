@@ -1,0 +1,381 @@
+/* Neumorphism Custom Styles */
+
+:root {
+  --neumo-bg: #e0e5ec;
+  --neumo-light: #ffffff;
+  --neumo-dark: #a3b1c6;
+  --neumo-text: #333333;
+  --neumo-text-muted: #666666;
+  --neumo-primary: #4a90e2;
+  --neumo-success: #7ed321;
+  --neumo-warning: #f5a623;
+  --neumo-error: #d0021b;
+}
+
+/* Base neumorphism effects */
+.neumo-base {
+  background: var(--neumo-bg);
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.neumo-card {
+  background: var(--neumo-bg);
+  border-radius: 24px;
+  box-shadow: 
+    9px 9px 16px var(--neumo-dark),
+    -9px -9px 16px var(--neumo-light);
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.neumo-card:hover {
+  box-shadow: 
+    12px 12px 20px var(--neumo-dark),
+    -12px -12px 20px var(--neumo-light);
+}
+
+.neumo-button {
+  background: var(--neumo-bg);
+  border: none;
+  border-radius: 16px;
+  box-shadow: 
+    6px 6px 12px var(--neumo-dark),
+    -6px -6px 12px var(--neumo-light);
+  color: var(--neumo-text);
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.neumo-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    8px 8px 16px var(--neumo-dark),
+    -8px -8px 16px var(--neumo-light);
+}
+
+.neumo-button:active {
+  transform: translateY(1px);
+  box-shadow: 
+    inset 6px 6px 12px var(--neumo-dark),
+    inset -6px -6px 12px var(--neumo-light);
+}
+
+.neumo-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.neumo-button.primary {
+  background: linear-gradient(145deg, #5ba2f0, #4a90e2);
+  color: white;
+  box-shadow: 
+    6px 6px 12px #3d7bc4,
+    -6px -6px 12px #579ff8;
+}
+
+.neumo-button.primary:hover {
+  box-shadow: 
+    8px 8px 16px #3d7bc4,
+    -8px -8px 16px #579ff8;
+}
+
+.neumo-button.success {
+  background: linear-gradient(145deg, #8be236, #7ed321);
+  color: white;
+  box-shadow: 
+    6px 6px 12px #6bb51d,
+    -6px -6px 12px #91f125;
+}
+
+.neumo-button.secondary {
+  background: linear-gradient(145deg, #f0f0f0, #e0e0e0);
+  color: var(--neumo-text);
+  box-shadow: 
+    6px 6px 12px var(--neumo-dark),
+    -6px -6px 12px var(--neumo-light);
+}
+
+.neumo-button.secondary:hover {
+  box-shadow: 
+    8px 8px 16px var(--neumo-dark),
+    -8px -8px 16px var(--neumo-light);
+}
+
+.neumo-input {
+  background: var(--neumo-bg);
+  border: none;
+  border-radius: 16px;
+  box-shadow: 
+    inset 6px 6px 12px var(--neumo-dark),
+    inset -6px -6px 12px var(--neumo-light);
+  color: var(--neumo-text);
+  outline: none;
+  padding: 0.75rem 1rem;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.neumo-input:focus {
+  box-shadow: 
+    inset 4px 4px 8px var(--neumo-dark),
+    inset -4px -4px 8px var(--neumo-light);
+}
+
+.neumo-input::placeholder {
+  color: var(--neumo-text-muted);
+}
+
+.neumo-select {
+  background: var(--neumo-bg);
+  border: none;
+  border-radius: 16px;
+  box-shadow: 
+    inset 6px 6px 12px var(--neumo-dark),
+    inset -6px -6px 12px var(--neumo-light);
+  color: var(--neumo-text);
+  cursor: pointer;
+  outline: none;
+  padding: 0.75rem 1rem;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.neumo-select:focus {
+  box-shadow: 
+    inset 4px 4px 8px var(--neumo-dark),
+    inset -4px -4px 8px var(--neumo-light);
+}
+
+.neumo-textarea {
+  background: var(--neumo-bg);
+  border: none;
+  border-radius: 16px;
+  box-shadow: 
+    inset 6px 6px 12px var(--neumo-dark),
+    inset -6px -6px 12px var(--neumo-light);
+  color: var(--neumo-text);
+  outline: none;
+  padding: 0.75rem 1rem;
+  resize: vertical;
+  transition: all 0.2s ease;
+  width: 100%;
+  min-height: 60px;
+}
+
+.neumo-textarea:focus {
+  box-shadow: 
+    inset 4px 4px 8px var(--neumo-dark),
+    inset -4px -4px 8px var(--neumo-light);
+}
+
+.neumo-textarea::placeholder {
+  color: var(--neumo-text-muted);
+}
+
+/* Progress bar */
+.neumo-progress {
+  background: var(--neumo-bg);
+  border-radius: 20px;
+  box-shadow: 
+    inset 4px 4px 8px var(--neumo-dark),
+    inset -4px -4px 8px var(--neumo-light);
+  height: 8px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.neumo-progress-bar {
+  background: linear-gradient(90deg, var(--neumo-primary), #5ba2f0);
+  border-radius: 20px;
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+/* Loading spinner */
+.neumo-spinner {
+  animation: neumo-spin 1s linear infinite;
+  border: 3px solid var(--neumo-bg);
+  border-radius: 50%;
+  border-top: 3px solid var(--neumo-primary);
+  height: 24px;
+  width: 24px;
+}
+
+@keyframes neumo-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Alert styles */
+.neumo-alert {
+  background: var(--neumo-bg);
+  border-radius: 16px;
+  box-shadow: 
+    6px 6px 12px var(--neumo-dark),
+    -6px -6px 12px var(--neumo-light);
+  margin: 1rem 0;
+  padding: 1rem 1.5rem;
+}
+
+.neumo-alert.success {
+  border-left: 4px solid var(--neumo-success);
+}
+
+.neumo-alert.warning {
+  border-left: 4px solid var(--neumo-warning);
+}
+
+.neumo-alert.error {
+  border-left: 4px solid var(--neumo-error);
+}
+
+/* Table styles */
+.neumo-table {
+  background: var(--neumo-bg);
+  border-collapse: separate;
+  border-radius: 16px;
+  border-spacing: 0;
+  box-shadow: 
+    6px 6px 12px var(--neumo-dark),
+    -6px -6px 12px var(--neumo-light);
+  overflow: hidden;
+  width: 100%;
+}
+
+.neumo-table th,
+.neumo-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.neumo-table th {
+  background: linear-gradient(145deg, #d4d9e0, #e0e5ec);
+  color: var(--neumo-text);
+  font-weight: 600;
+}
+
+.neumo-table tr:nth-child(even) {
+  background: rgba(163, 177, 198, 0.1);
+}
+
+.neumo-table tr:hover {
+  background: rgba(163, 177, 198, 0.2);
+}
+
+/* Modal styles */
+.neumo-modal-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.neumo-modal {
+  background: var(--neumo-bg);
+  border-radius: 24px;
+  box-shadow: 
+    16px 16px 32px var(--neumo-dark),
+    -16px -16px 32px var(--neumo-light);
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 2rem;
+}
+
+/* Chart container */
+.neumo-chart-container {
+  background: var(--neumo-bg);
+  border-radius: 20px;
+  box-shadow: 
+    8px 8px 16px var(--neumo-dark),
+    -8px -8px 16px var(--neumo-light);
+  padding: 1.5rem;
+  margin: 1rem 0;
+  height: 400px;
+  width: 100%;
+  position: relative;
+  min-height: 400px;
+  max-height: 400px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.neumo-chart-container canvas {
+  max-width: 100% !important;
+  max-height: 350px !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .neumo-card {
+    border-radius: 16px;
+    padding: 1rem;
+    box-shadow: 
+      4px 4px 8px var(--neumo-dark),
+      -4px -4px 8px var(--neumo-light);
+  }
+  
+  .neumo-button {
+    border-radius: 12px;
+    padding: 0.8rem 1.5rem;
+    min-height: 48px; /* Better touch target */
+  }
+  
+  .neumo-input,
+  .neumo-select,
+  .neumo-textarea {
+    border-radius: 12px;
+    padding: 0.8rem 1rem;
+    min-height: 48px; /* Better touch target */
+  }
+
+  /* Reduce inner shadows on mobile for better contrast */
+  .neumo-input,
+  .neumo-select,
+  .neumo-textarea {
+    box-shadow: 
+      inset 3px 3px 6px var(--neumo-dark),
+      inset -3px -3px 6px var(--neumo-light);
+  }
+
+  .neumo-input:focus,
+  .neumo-select:focus,
+  .neumo-textarea:focus {
+    box-shadow: 
+      inset 2px 2px 4px var(--neumo-dark),
+      inset -2px -2px 4px var(--neumo-light);
+  }
+
+  /* Larger text for better readability */
+  .neumo-button {
+    font-size: 16px;
+  }
+
+  .neumo-input,
+  .neumo-select {
+    font-size: 16px;
+  }
+}
+
+/* Utility classes */
+.text-neumo-primary { color: var(--neumo-primary); }
+.text-neumo-success { color: var(--neumo-success); }
+.text-neumo-warning { color: var(--neumo-warning); }
+.text-neumo-error { color: var(--neumo-error); }
+.text-neumo-muted { color: var(--neumo-text-muted); }

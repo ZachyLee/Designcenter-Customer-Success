@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-neumo-bg font-sans;
+    margin: 0;
+    min-height: 100vh;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+@layer components {
+  .neumo-card {
+    @apply bg-neumo-bg rounded-3xl shadow-neumo p-6;
+  }
+
+  .neumo-button {
+    @apply bg-neumo-bg rounded-2xl shadow-neumo-button px-6 py-3 transition-all duration-200 hover:shadow-neumo-pressed active:shadow-neumo-pressed;
+  }
+
+  .neumo-input {
+    @apply bg-neumo-bg rounded-2xl shadow-neumo-inset px-4 py-3 outline-none transition-all duration-200 focus:shadow-neumo-small;
+  }
+
+  .neumo-select {
+    @apply bg-neumo-bg rounded-2xl shadow-neumo-inset px-4 py-3 outline-none transition-all duration-200 focus:shadow-neumo-small;
+  }
+
+  .neumo-textarea {
+    @apply bg-neumo-bg rounded-2xl shadow-neumo-inset px-4 py-3 outline-none transition-all duration-200 focus:shadow-neumo-small resize-none;
+  }
+}
