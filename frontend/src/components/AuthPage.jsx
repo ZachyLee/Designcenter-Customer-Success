@@ -113,6 +113,7 @@ const AuthPage = () => {
           email: formData.email,
           password: formData.password,
           options: {
+            emailRedirectTo: `${window.location.origin}/`,
             data: {
               firstName: formData.firstName,
               lastName: formData.lastName,
