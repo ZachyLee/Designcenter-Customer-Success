@@ -1080,6 +1080,7 @@ router.post('/issue-voucher-code', adminAuth, async (req, res) => {
 
     // Find an available voucher code for the specified certification exam
     // Order by ID to ensure top-to-bottom assignment (first created = first assigned)
+    // Use a transaction to prevent race conditions from fast clicking
     const { data: availableVouchers, error: findError } = await supabaseAdmin
       .from('voucher_codes')
       .select('*')
@@ -1126,24 +1127,30 @@ router.post('/issue-voucher-code', adminAuth, async (req, res) => {
     }
 
     // Also update the voucher request status to "processed" and set issue_date and voucher_code
-    try {
-      const { error: requestUpdateError } = await supabaseAdmin
-        .from('nx_voucher_requests')
-        .update({
-          status: 'processed',
-          voucher_code: updatedVoucher.voucher_code,
-          issue_date: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', requestId);
+    // ONLY if voucher was successfully assigned
+    if (updatedVoucher && updatedVoucher.voucher_code) {
+      try {
+        const { error: requestUpdateError } = await supabaseAdmin
+          .from('nx_voucher_requests')
+          .update({
+            status: 'processed',
+            voucher_code: updatedVoucher.voucher_code,
+            issue_date: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', requestId);
 
-      if (requestUpdateError) {
+        if (requestUpdateError) {
+          console.error('Error updating voucher request status:', requestUpdateError);
+          return res.status(500).json({ error: 'Voucher assigned but failed to update request status' });
+        }
+      } catch (requestUpdateError) {
         console.error('Error updating voucher request status:', requestUpdateError);
-        // Continue anyway since the voucher code was issued successfully
+        return res.status(500).json({ error: 'Voucher assigned but failed to update request status' });
       }
-    } catch (requestUpdateError) {
-      console.error('Error updating voucher request status:', requestUpdateError);
-      // Continue anyway since the voucher code was issued successfully
+    } else {
+      console.error('No voucher code in updatedVoucher:', updatedVoucher);
+      return res.status(500).json({ error: 'Failed to assign voucher code' });
     }
 
     res.json({
@@ -1454,6 +1461,55 @@ router.put('/cleanup-certification-data', adminAuth, async (req, res) => {
     });
   } catch (error) {
     console.error('Error cleaning up certification data:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET /api/admin/debug-voucher-availability - Debug voucher availability issue
+router.get('/debug-voucher-availability', adminAuth, async (req, res) => {
+  if (!checkSupabaseAdmin(res)) return;
+
+  try {
+    // Get all voucher codes
+    const { data: allVoucherCodes, error: voucherError } = await supabaseAdmin
+      .from('voucher_codes')
+      .select('*')
+      .order('id', { ascending: true });
+
+    if (voucherError) throw voucherError;
+
+    // Get recent voucher requests
+    const { data: recentRequests, error: requestError } = await supabase
+      .from('nx_voucher_requests')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    if (requestError) throw requestError;
+
+    // Group voucher codes by certification exam and status
+    const vouchersByExam = {};
+    allVoucherCodes.forEach(voucher => {
+      const exam = voucher.certification_exam;
+      if (!vouchersByExam[exam]) {
+        vouchersByExam[exam] = { available: 0, issued: 0, redeemed: 0, completed: 0, total: 0 };
+      }
+      vouchersByExam[exam][voucher.status] = (vouchersByExam[exam][voucher.status] || 0) + 1;
+      vouchersByExam[exam].total++;
+    });
+
+    res.json({
+      vouchersByExam,
+      allVoucherCodes,
+      recentRequests,
+      summary: {
+        totalVoucherCodes: allVoucherCodes.length,
+        totalRequests: recentRequests.length,
+        uniqueExams: Object.keys(vouchersByExam)
+      }
+    });
+  } catch (error) {
+    console.error('Error in debug endpoint:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -1866,5 +1922,34 @@ router.post('/export-partner-voucher-pdf', async (req, res) => {
   }
 });
 
+
+// GET /api/admin/debug-voucher-simple - Simple debug endpoint (no auth for testing)
+router.get('/debug-voucher-simple', async (req, res) => {
+  if (!checkSupabaseAdmin(res)) return;
+
+  try {
+    // Just get counts by status and exam
+    const { data: voucherCodes, error } = await supabaseAdmin
+      .from('voucher_codes')
+      .select('certification_exam, status');
+
+    if (error) throw error;
+
+    const summary = {};
+    voucherCodes.forEach(v => {
+      const exam = v.certification_exam;
+      if (!summary[exam]) summary[exam] = {};
+      summary[exam][v.status] = (summary[exam][v.status] || 0) + 1;
+    });
+
+    res.json({
+      summary,
+      totalCodes: voucherCodes.length,
+      message: "Voucher codes by certification exam and status"
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 module.exports = router;
