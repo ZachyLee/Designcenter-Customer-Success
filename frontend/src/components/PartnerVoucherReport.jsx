@@ -199,7 +199,9 @@ const PartnerVoucherReport = ({ partnerEmail }) => {
     try {
       setLoading(true);
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/export-partner-voucher-pdf`, {
+      // Use production domain in production, localhost in development
+      const apiUrl = import.meta.env.VITE_API_URL || window.location.origin;
+      const response = await fetch(`${apiUrl}/api/admin/export-partner-voucher-pdf`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
