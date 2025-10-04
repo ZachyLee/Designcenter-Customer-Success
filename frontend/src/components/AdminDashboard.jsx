@@ -766,7 +766,7 @@ const AdminDashboard = () => {
               <div>
                 <h1 className="text-xl font-bold text-gray-900">Admin Dashboard</h1>
                 <p className="text-sm text-gray-500">
-                  {activePanel === 'voucher' ? 'Voucher Administration' : 'Assessment Administration'}
+                  {activePanel === 'voucher' ? 'Voucher Requests Administration' : 'Assessment Administration'}
                 </p>
               </div>
             </div>
@@ -806,7 +806,7 @@ const AdminDashboard = () => {
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
-              🎫 Voucher Administration
+              🎫 Voucher Requests Administration
             </button>
           </div>
         </div>
@@ -1307,7 +1307,7 @@ const AdminDashboard = () => {
                   <span className="text-white font-bold">🎫</span>
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">Voucher Administration</h2>
+                  <h2 className="text-xl font-bold text-gray-900">Voucher Requests Administration</h2>
                   <p className="text-sm text-gray-500">Manage NX Credly certification voucher requests</p>
                 </div>
               </div>
