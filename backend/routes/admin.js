@@ -565,47 +565,9 @@ router.get('/voucher-requests', adminAuth, async (req, res) => {
           request.assigned_voucher_code = voucherCodes[0].voucher_code;
           request.voucher_assigned_at = voucherCodes[0].issue_date;
 
-          // If this request doesn't have proper status/issue_date, update it
-          if ((request.status === 'approved' || request.status === 'pending') && !request.issue_date) {
-            console.log(`Updating request ${request.id} for ${request.customer_email} - setting status to processed and issue_date`);
-
-            const issueDate = voucherCodes[0].issue_date || new Date().toISOString();
-
-            const { error: updateError } = await supabaseAdmin
-              .from('nx_voucher_requests')
-              .update({
-                status: 'processed',
-                issue_date: issueDate
-              })
-              .eq('id', request.id);
-
-            if (!updateError) {
-              request.status = 'processed';
-              request.issue_date = issueDate;
-              console.log(`Successfully updated request ${request.id} to processed status with issue_date: ${issueDate}`);
-            } else {
-              console.error(`Failed to update request ${request.id}:`, updateError);
-            }
-          }
-
-          // Also ensure that processed requests without issue_date get updated
-          if (request.status === 'processed' && !request.issue_date) {
-            console.log(`Adding missing issue_date to processed request ${request.id}`);
-
-            const issueDate = voucherCodes[0].issue_date || new Date().toISOString();
-
-            const { error: updateError } = await supabaseAdmin
-              .from('nx_voucher_requests')
-              .update({
-                issue_date: issueDate
-              })
-              .eq('id', request.id);
-
-            if (!updateError) {
-              request.issue_date = issueDate;
-              console.log(`Successfully added issue_date to request ${request.id}: ${issueDate}`);
-            }
-          }
+          // NOTE: Removed automatic issue_date updating logic that was causing
+          // unwanted database modifications during read operations.
+          // Issue dates should only be set when explicitly issuing vouchers.
         } else if (voucherError) {
           console.error(`Error fetching voucher codes for ${request.customer_email}:`, voucherError);
         }
