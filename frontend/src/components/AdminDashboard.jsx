@@ -237,11 +237,11 @@ const AdminDashboard = () => {
 
   const handleRejectConfirm = async () => {
     if (rejectionReason.trim().length === 0) {
-      alert('Please enter a reason for rejection (1-24 characters)');
+      alert('Please enter a reason for rejection (1-36 characters)');
       return;
     }
-    if (rejectionReason.length > 24) {
-      alert('Rejection reason must be 24 characters or less');
+    if (rejectionReason.length > 36) {
+      alert('Rejection reason must be 36 characters or less');
       return;
     }
 
@@ -1300,6 +1300,66 @@ const AdminDashboard = () => {
               </div>
             </div>
 
+            {/* Additional Tools & Analytics Card */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold">🛠️</span>
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">Additional Tools & Analytics</h2>
+                  <p className="text-sm text-gray-500">Advanced features for monitoring and management</p>
+                </div>
+              </div>
+
+              {/* Tools Buttons */}
+              <div className="flex justify-center gap-3">
+                <button
+                  onClick={() => setVoucherFilter('analytics')}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                    voucherFilter === 'analytics'
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200'
+                  }`}
+                >
+                  📈 Analytics Dashboard
+                </button>
+                <button
+                  onClick={() => setVoucherFilter('tracking')}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                    voucherFilter === 'tracking'
+                      ? 'bg-green-600 text-white'
+                      : 'bg-green-50 text-green-700 hover:bg-green-100 border border-green-200'
+                  }`}
+                >
+                  📊 Voucher Codes Tracking
+                </button>
+                <button
+                  onClick={() => setVoucherFilter('rejected')}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-2 ${
+                    voucherFilter === 'rejected'
+                      ? 'bg-red-600 text-white'
+                      : 'bg-red-50 text-red-700 hover:bg-red-100 border border-red-200'
+                  }`}
+                >
+                  ❌ Rejected Requests
+                  <span className="bg-white text-red-600 px-2 py-0.5 rounded-full text-xs font-bold">
+                    {voucherRequests.filter(req => req.status === 'rejected').length}
+                  </span>
+                </button>
+                <button
+                  onClick={() => setVoucherFilter('management')}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                    voucherFilter === 'management'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200'
+                  }`}
+                >
+                  📤 Voucher Codes Management
+                </button>
+              </div>
+            </div>
+
             {/* Main Section Header */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <div className="flex items-center space-x-3 mb-6">
@@ -1425,52 +1485,6 @@ const AdminDashboard = () => {
                   </div>
                 </div>
 
-                {/* Additional Actions (separate) */}
-                <div className="flex justify-center gap-3 pt-4 border-t border-gray-200">
-                  <button
-                    onClick={() => setVoucherFilter('analytics')}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                      voucherFilter === 'analytics'
-                        ? 'bg-purple-600 text-white'
-                        : 'bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200'
-                    }`}
-                  >
-                    📈 Analytics Dashboard
-                  </button>
-                  <button
-                    onClick={() => setVoucherFilter('tracking')}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                      voucherFilter === 'tracking'
-                        ? 'bg-green-600 text-white'
-                        : 'bg-green-50 text-green-700 hover:bg-green-100 border border-green-200'
-                    }`}
-                  >
-                    📊 Voucher Codes Tracking
-                  </button>
-                  <button
-                    onClick={() => setVoucherFilter('rejected')}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-2 ${
-                      voucherFilter === 'rejected'
-                        ? 'bg-red-600 text-white'
-                        : 'bg-red-50 text-red-700 hover:bg-red-100 border border-red-200'
-                    }`}
-                  >
-                    ❌ Rejected Requests
-                    <span className="bg-white text-red-600 px-2 py-0.5 rounded-full text-xs font-bold">
-                      {voucherRequests.filter(req => req.status === 'rejected').length}
-                    </span>
-                  </button>
-                  <button
-                    onClick={() => setVoucherFilter('management')}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                      voucherFilter === 'management'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200'
-                    }`}
-                  >
-                    📤 Voucher Codes Management
-                  </button>
-                </div>
               </div>
             </div>
 
@@ -2350,12 +2364,12 @@ const AdminDashboard = () => {
           <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Reject Voucher Request</h3>
             <p className="text-sm text-gray-600 mb-4">
-              Please provide a reason for rejecting this voucher request (maximum 24 characters):
+              Please provide a reason for rejecting this voucher request (maximum 36 characters):
             </p>
             <textarea
               value={rejectionReason}
               onChange={(e) => {
-                if (e.target.value.length <= 24) {
+                if (e.target.value.length <= 36) {
                   setRejectionReason(e.target.value);
                 }
               }}
