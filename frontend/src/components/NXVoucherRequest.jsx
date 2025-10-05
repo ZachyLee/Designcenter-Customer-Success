@@ -320,98 +320,73 @@ const NXVoucherRequest = () => {
   }
 
   return (
-    <div className="min-h-screen p-4 md:p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
-        <div className="relative">
-          {/* Back to Home Button - Top Right */}
-          <div className="absolute top-0 right-0 z-10">
-            <button
-              onClick={handleBackToLanding}
-              className="neumo-button secondary px-4 py-2 text-sm flex items-center space-x-2 hover:bg-gray-300 transition-colors"
-            >
-              <span>🏠</span>
-              <span>Back to Home</span>
-            </button>
-          </div>
-
-          <div className="text-center mb-8">
-            <div className="mb-6">
-              <div className="mx-auto mb-4 flex items-center justify-center">
-                <img
-                  src="/xcelerator.jpg"
-                  alt="Xcelerator Logo"
-                  className="w-16 h-16 object-contain"
-                />
-              </div>
-            </div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
-              NX Credly Certification Program
-            </h1>
-            <p className="text-gray-600 text-sm md:text-base leading-relaxed">
-              Manage your NX certification voucher requests
-            </p>
-          </div>
-        </div>
-
-        {/* User Info */}
-        <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200 neumo-card">
-          <div className="text-sm text-gray-700 text-center">
+    <div className="min-h-screen flex items-center justify-center p-4 md:p-6">
+      <div className="neumo-card max-w-4xl w-full">
+        {/* User Info Header - matching landing page style */}
+        <div className="flex justify-between items-center mb-6">
+          <div className="text-sm text-gray-600">
             {userInfo.company && (
-              <div className="font-semibold text-blue-800 mb-1">
+              <div className="font-semibold text-gray-800">
                 {userInfo.company}
               </div>
             )}
-            <div className="font-medium">
-              Partner: {userInfo.fullName || userInfo.name}
+            <div>Partner: {userInfo.fullName || userInfo.name}</div>
+            <div className="text-xs text-gray-500">{userInfo.email}</div>
+          </div>
+          <button
+            onClick={handleBackToLanding}
+            className="text-sm text-gray-600 hover:text-gray-800 transition-colors py-1 px-3 rounded-lg hover:bg-gray-100"
+          >
+            ← Back to Home
+          </button>
+        </div>
+
+        {/* Header Section - matching landing page */}
+        <div className="text-center mb-8">
+          <div className="mb-6">
+            <div className="mx-auto mb-4 flex items-center justify-center">
+              <img
+                src="/xcelerator.jpg"
+                alt="Xcelerator Logo"
+                className="w-16 h-16 object-contain"
+              />
             </div>
-            <div className="text-xs text-gray-600">{userInfo.email}</div>
           </div>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
+            NX Credly Certification Program
+          </h1>
+          <p className="text-gray-600 text-sm md:text-base leading-relaxed">
+            Manage your NX certification voucher requests
+          </p>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="mb-6">
-          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-            <button
-              onClick={() => setActiveTab('request')}
-              className={`flex-1 py-4 px-6 rounded-lg transition-all duration-300 ${
-                activeTab === 'request'
-                  ? 'bg-blue-600 text-white shadow-lg neumo-button-active'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300 neumo-button'
-              }`}
-            >
-              <div className="flex items-center justify-center space-x-3">
-                <span className="text-xl">📝</span>
-                <div>
-                  <div className="font-medium">Customer Voucher Request</div>
-                  <div className="text-xs opacity-90">Submit new voucher requests</div>
-                </div>
-              </div>
-            </button>
+        {/* Navigation Tabs - matching landing page button style */}
+        <div className="mb-6 space-y-4">
+          <button
+            onClick={() => setActiveTab('request')}
+            className={`neumo-button w-full py-5 flex items-center justify-center space-x-3 text-lg ${
+              activeTab === 'request' ? 'primary' : ''
+            }`}
+          >
+            <span className="text-2xl">📝</span>
+            <span>Customer Voucher Request</span>
+          </button>
 
-            <button
-              onClick={() => setActiveTab('report')}
-              className={`flex-1 py-4 px-6 rounded-lg transition-all duration-300 ${
-                activeTab === 'report'
-                  ? 'bg-green-600 text-white shadow-lg neumo-button-active'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300 neumo-button'
-              }`}
-            >
-              <div className="flex items-center justify-center space-x-3">
-                <span className="text-xl">📊</span>
-                <div>
-                  <div className="font-medium">Voucher Request Report</div>
-                  <div className="text-xs opacity-90">View status of all requests</div>
-                </div>
-              </div>
-            </button>
-          </div>
+          <button
+            onClick={() => setActiveTab('report')}
+            className={`neumo-button w-full py-5 flex items-center justify-center space-x-3 text-lg ${
+              activeTab === 'report' ? 'primary' : ''
+            }`}
+          >
+            <span className="text-2xl">📊</span>
+            <span>Voucher Request Report</span>
+          </button>
         </div>
 
-        {/* Tab Content */}
-        <div className="neumo-card">
+        {/* Content Area */}
+        <div>
           {activeTab === 'request' ? (
-            <div className="p-6">
+            <div>
               {/* Error Message */}
               {error && (
                 <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
@@ -753,7 +728,7 @@ const NXVoucherRequest = () => {
         </form>
             </div>
           ) : (
-            <div className="p-6">
+            <div>
               <PartnerVoucherReport partnerEmail={userInfo.email} />
             </div>
           )}
