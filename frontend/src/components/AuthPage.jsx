@@ -225,14 +225,14 @@ const AuthPage = () => {
                 : 'Welcome to Designcenter Customer Success Journey'
             }
           </h1>
-          <p className="text-gray-600 text-sm md:text-base leading-relaxed">
-            {isForgotPassword
-              ? 'Enter your email address and we\'ll send you a link to reset your password'
-              : isSignUp
-                ? 'Join us to access the Solid Edge Success Criteria Checklist'
+          {!isSignUp && (
+            <p className="text-gray-600 text-sm md:text-base leading-relaxed">
+              {isForgotPassword
+                ? 'Enter your email address and we\'ll send you a link to reset your password'
                 : 'Please sign in to continue'
-            }
-          </p>
+              }
+            </p>
+          )}
         </div>
 
         {/* Error Message */}

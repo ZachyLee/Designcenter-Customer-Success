@@ -6,6 +6,7 @@ const VoucherRequestChart = ({ language }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [viewMode, setViewMode] = useState('approved'); // 'approved' or 'certifications'
+  const [isExpanded, setIsExpanded] = useState(false); // Collapsible state
 
   useEffect(() => {
     fetchVoucherData();
@@ -166,23 +167,36 @@ const VoucherRequestChart = ({ language }) => {
   const totalCertifications = chartData.reduce((sum, item) => sum + item.certifications, 0);
 
   return (
-    <div className="neumo-card p-6">
-      {/* Header */}
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center">
-          <span className="mr-2">📊</span>
+    <div className="mb-6">
+      {/* Collapsible Header Button */}
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="neumo-button primary w-full py-5 flex items-center justify-center space-x-3 text-lg mb-6"
+      >
+        <span className="text-2xl">📊</span>
+        <span>
           {language === 'EN'
             ? 'NX Certification Analytics by Country'
             : 'Analitik Sertifikasi NX per Negara'
           }
-        </h3>
-        <p className="text-sm text-gray-600">
-          {language === 'EN'
-            ? 'Interactive performance tracking across Southeast Asia'
-            : 'Pelacakan kinerja interaktif di Asia Tenggara'
-          }
-        </p>
-      </div>
+        </span>
+        <span className="text-xl transition-transform duration-300">
+          {isExpanded ? '⌃' : '⌄'}
+        </span>
+      </button>
+
+      {/* Analytics Content */}
+      {isExpanded && (
+        <div className="neumo-card p-6">
+          {/* Subtitle */}
+          <div className="mb-6">
+            <p className="text-sm text-gray-600 text-center">
+              {language === 'EN'
+                ? 'Interactive performance tracking across Southeast Asia'
+                : 'Pelacakan kinerja interaktif di Asia Tenggara'
+              }
+            </p>
+          </div>
 
       {/* Toggle Buttons */}
       <div className="mb-6">
@@ -276,19 +290,14 @@ const VoucherRequestChart = ({ language }) => {
                     )}
                   </div>
 
-                  {/* Stats - Inside card */}
-                  <div className="text-center min-w-[50px]">
-                    <div className={`text-sm font-bold ${
-                      hasValue ? colors.text : 'text-gray-400'
-                    }`}>
-                      {item.currentPercentage}%
-                    </div>
-                    {viewMode === 'certifications' && item.approved > 0 && (
-                      <div className="text-xs font-medium text-emerald-600">
+                  {/* Completion Rate - Keep only this */}
+                  {viewMode === 'certifications' && item.approved > 0 && (
+                    <div className="text-center min-w-[50px]">
+                      <div className="text-sm font-bold text-emerald-600">
                         {item.completionRate}%
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -329,6 +338,8 @@ const VoucherRequestChart = ({ language }) => {
           }
         </div>
       </div>
+        </div>
+      )}
     </div>
   );
 };
