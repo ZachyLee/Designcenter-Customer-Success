@@ -2150,8 +2150,8 @@ const AdminDashboard = () => {
               <div className="flex items-center space-x-2 mb-4">
                 <span className="text-sm">📋</span>
                 <h3 className="text-lg font-semibold text-gray-900">
-                  {voucherFilter === 'pending-approval' && 'Pending Approval Requests'}
-                  {voucherFilter === 'issue-voucher-code' && 'Ready to Issue Voucher Codes'}
+                  {voucherFilter === 'pending-approval' && 'Pending Approval'}
+                  {voucherFilter === 'issue-voucher-code' && 'Issue Voucher'}
                   {voucherFilter === 'record-redemption' && 'Record Redemption'}
                   {voucherFilter === 'mark-certification' && 'Mark Certification'}
                   {voucherFilter === 'rejected' && 'Rejected Requests'}
@@ -2376,10 +2376,10 @@ const AdminDashboard = () => {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
               rows="3"
               placeholder="Enter rejection reason..."
-              maxLength="24"
+              maxLength="36"
             />
             <div className="text-xs text-gray-500 mb-4">
-              {rejectionReason.length}/24 characters
+              {rejectionReason.length}/36 characters
             </div>
             <div className="flex space-x-3">
               <button
