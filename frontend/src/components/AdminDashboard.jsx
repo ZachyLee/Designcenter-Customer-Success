@@ -94,6 +94,11 @@ const AdminDashboard = () => {
   });
   const [lastUpdated, setLastUpdated] = useState(null);
 
+  // Users Administration state
+  const [users, setUsers] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [usersError, setUsersError] = useState(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -748,6 +753,53 @@ const AdminDashboard = () => {
     });
   };
 
+  // Fetch all users
+  const fetchUsers = async () => {
+    try {
+      setLoadingUsers(true);
+      setUsersError(null);
+      const token = localStorage.getItem('adminToken');
+
+      const response = await axios.get('/api/admin/users', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      setUsers(response.data);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      setUsersError('Failed to load users');
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
+
+  // Delete user
+  const handleDeleteUser = async (userId) => {
+    if (!window.confirm('Are you sure you want to delete this user? This will also delete all their associated data (answers, etc.).')) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('adminToken');
+      await axios.delete(`/api/admin/users/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      alert('User deleted successfully');
+      fetchUsers(); // Refresh the list
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      alert('Failed to delete user: ' + (error.response?.data?.error || error.message));
+    }
+  };
+
+  // Fetch users when users panel is active
+  useEffect(() => {
+    if (activePanel === 'users') {
+      fetchUsers();
+    }
+  }, [activePanel]);
+
   // Login Form
   if (!isAuthenticated) {
     return (
@@ -835,7 +887,8 @@ const AdminDashboard = () => {
               <div>
                 <h1 className="text-xl font-bold text-gray-900">Admin Dashboard</h1>
                 <p className="text-sm text-gray-500">
-                  {activePanel === 'voucher' ? 'Voucher Requests Administration' : 'Assessment Administration'}
+                  {activePanel === 'voucher' ? 'Voucher Requests Administration' :
+                   activePanel === 'users' ? 'Users Administration' : 'Assessment Administration'}
                 </p>
               </div>
             </div>
@@ -876,6 +929,16 @@ const AdminDashboard = () => {
               }`}
             >
               🎫 Voucher Requests Administration
+            </button>
+            <button
+              onClick={() => setActivePanel('users')}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                activePanel === 'users'
+                  ? 'bg-purple-500 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              👥 Users Administration
             </button>
           </div>
         </div>
@@ -2386,6 +2449,101 @@ const AdminDashboard = () => {
             </div>
             </>
           )}
+        </div>
+      )}
+
+      {/* Users Administration Panel */}
+      {activePanel === 'users' && (
+        <div className="space-y-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">👥 Users Administration</h3>
+                <p className="text-sm text-gray-600">View and manage all registered users from Supabase Auth</p>
+              </div>
+              <button
+                onClick={fetchUsers}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm"
+              >
+                🔄 Refresh
+              </button>
+            </div>
+
+            {loadingUsers ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+                <p className="mt-2 text-gray-600">Loading users...</p>
+              </div>
+            ) : usersError ? (
+              <div className="text-center py-8 text-red-600">{usersError}</div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User Type</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Country</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Sign In</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {users.length === 0 ? (
+                      <tr>
+                        <td colSpan="9" className="px-4 py-8 text-center text-gray-500">
+                          No users found
+                        </td>
+                      </tr>
+                    ) : (
+                      users.map((user, index) => (
+                        <tr key={user.id} className="hover:bg-gray-50">
+                          <td className="px-4 py-4 text-sm text-gray-900">{index + 1}</td>
+                          <td className="px-4 py-4 text-sm text-gray-900">{user.email}</td>
+                          <td className="px-4 py-4 text-sm">
+                            <span className={`px-2 py-1 text-xs rounded-full ${
+                              user.user_type === 'Partner' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
+                            }`}>
+                              {user.user_type || 'User'}
+                            </span>
+                          </td>
+                          <td className="px-4 py-4 text-sm text-gray-900">
+                            {user.first_name || user.last_name
+                              ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
+                              : '-'}
+                          </td>
+                          <td className="px-4 py-4 text-sm text-gray-900">
+                            {user.company || '-'}
+                          </td>
+                          <td className="px-4 py-4 text-sm text-gray-900">
+                            {user.country || '-'}
+                          </td>
+                          <td className="px-4 py-4 text-sm text-gray-900">
+                            {user.created_at ? new Date(user.created_at).toLocaleString() : '-'}
+                          </td>
+                          <td className="px-4 py-4 text-sm text-gray-900">
+                            {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString() : 'Never'}
+                          </td>
+                          <td className="px-4 py-4 text-sm text-gray-900">
+                            <button
+                              onClick={() => handleDeleteUser(user.id)}
+                              className="text-red-600 hover:text-red-800 text-xs font-medium bg-red-50 px-3 py-1 rounded hover:bg-red-100"
+                            >
+                              🗑️ Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
       )}
 

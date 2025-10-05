@@ -1914,4 +1914,68 @@ router.get('/debug-voucher-simple', async (req, res) => {
   }
 });
 
+// Get all users from Supabase Auth
+router.get('/users', adminAuth, async (req, res) => {
+  try {
+    if (!supabaseAdmin) {
+      return res.status(500).json({ error: 'Supabase admin client not configured' });
+    }
+
+    // Fetch users from Supabase Auth using Admin API
+    const { data, error } = await supabaseAdmin.auth.admin.listUsers();
+
+    if (error) {
+      console.error('Error fetching users from Supabase Auth:', error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    // Transform the user data to include relevant information
+    // Note: Supabase stores metadata with different field name formats
+    const users = data.users.map(user => {
+      const metadata = user.user_metadata || {};
+      return {
+        id: user.id,
+        email: user.email,
+        user_type: metadata.userType || metadata.user_type || 'User',
+        first_name: metadata.firstName || metadata.first_name || '',
+        last_name: metadata.lastName || metadata.last_name || '',
+        company: metadata.companyName || metadata.company || '',
+        country: metadata.country || '',
+        created_at: user.created_at,
+        last_sign_in_at: user.last_sign_in_at,
+        email_confirmed_at: user.email_confirmed_at
+      };
+    });
+
+    res.json(users);
+  } catch (error) {
+    console.error('Error in /users endpoint:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Delete user from Supabase Auth
+router.delete('/users/:id', adminAuth, async (req, res) => {
+  try {
+    if (!supabaseAdmin) {
+      return res.status(500).json({ error: 'Supabase admin client not configured' });
+    }
+
+    const userId = req.params.id;
+
+    // Delete user from Supabase Auth using Admin API
+    const { data, error } = await supabaseAdmin.auth.admin.deleteUser(userId);
+
+    if (error) {
+      console.error('Error deleting user from Supabase Auth:', error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    res.json({ message: 'User deleted successfully from authentication system' });
+  } catch (error) {
+    console.error('Error in DELETE /users/:id endpoint:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;
