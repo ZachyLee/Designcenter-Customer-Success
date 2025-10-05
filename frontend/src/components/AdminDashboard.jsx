@@ -652,6 +652,75 @@ const AdminDashboard = () => {
     }
   };
 
+  // Export analytics data to Excel
+  const handleExportAnalytics = () => {
+    try {
+      if (!analyticsData || !analyticsData.recentRequests || analyticsData.recentRequests.length === 0) {
+        alert('No analytics data to export');
+        return;
+      }
+
+      // Prepare data for Excel export
+      const exportData = analyticsData.recentRequests.map((request, index) => ({
+        '#': index + 1,
+        'Date': new Date(request.request_date).toLocaleDateString(),
+        'Partner': request.partner_company || request.partner_name || '',
+        'Partner Email': request.partner_email || '',
+        'Customer Company': request.customer_company || '',
+        'Candidate': `${request.candidate_first_name} ${request.candidate_last_name}`,
+        'Candidate Email': request.customer_email || '',
+        'Certification': request.certification_exam || '',
+        'Country': request.country || '',
+        'Status': request.status || '',
+        'Customer Type': request.customer_type || '',
+        'Voucher Code': request.voucher_code || '',
+        'Redemption Date': request.redemption_date ? new Date(request.redemption_date).toLocaleDateString() : '',
+        'Certified Date': request.certified_date ? new Date(request.certified_date).toLocaleDateString() : '',
+        'Rejection Reason': request.rejection_reason || ''
+      }));
+
+      // Create workbook and worksheet
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(exportData);
+
+      // Set column widths
+      ws['!cols'] = [
+        { width: 5 },  // #
+        { width: 12 }, // Date
+        { width: 20 }, // Partner
+        { width: 25 }, // Partner Email
+        { width: 20 }, // Customer Company
+        { width: 20 }, // Candidate
+        { width: 25 }, // Candidate Email
+        { width: 25 }, // Certification
+        { width: 12 }, // Country
+        { width: 12 }, // Status
+        { width: 15 }, // Customer Type
+        { width: 20 }, // Voucher Code
+        { width: 15 }, // Redemption Date
+        { width: 15 }, // Certified Date
+        { width: 36 }  // Rejection Reason
+      ];
+
+      // Add worksheet to workbook
+      XLSX.utils.book_append_sheet(wb, ws, 'Analytics Report');
+
+      // Generate filename with current date and filters
+      const now = new Date();
+      const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD format
+      const statusFilter = analyticsFilters.status !== 'all' ? `-${analyticsFilters.status}` : '';
+      const filename = `analytics-report${statusFilter}-${dateStr}.xlsx`;
+
+      // Write and download file
+      XLSX.writeFile(wb, filename);
+
+      console.log(`Exported ${exportData.length} records to ${filename}`);
+    } catch (error) {
+      console.error('Error exporting analytics:', error);
+      alert('Failed to export analytics data. Check console for details.');
+    }
+  };
+
   // Real-time updates every 30 seconds when analytics is active
   useEffect(() => {
     let interval;
@@ -1734,9 +1803,9 @@ const AdminDashboard = () => {
                         <option value="approved">Approved</option>
                         <option value="processed">Processed</option>
                         <option value="redeemed">Redeemed</option>
+                        <option value="rejected">Rejected</option>
                         <option value="certifications-achieved">Certifications Achieved</option>
                         <option value="certifications-not-achieved">Certifications Not Achieved</option>
-                        <option value="rejected">Rejected</option>
                       </select>
 
                       <select
@@ -1778,8 +1847,16 @@ const AdminDashboard = () => {
                       />
                     </div>
 
-                    <div className="text-sm text-gray-500">
-                      {lastUpdated && `Last Updated: ${lastUpdated.toLocaleTimeString()}`}
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={handleExportAnalytics}
+                        className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors flex items-center gap-2"
+                      >
+                        📊 Export to Excel
+                      </button>
+                      <div className="text-sm text-gray-500">
+                        {lastUpdated && `Last Updated: ${lastUpdated.toLocaleTimeString()}`}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -2184,7 +2261,9 @@ const AdminDashboard = () => {
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Certification</th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Country</th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Voucher Code</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          {voucherFilter === 'rejected' ? 'Reject Reasons' : 'Voucher Code'}
+                        </th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                       </tr>
                     </thead>
@@ -2242,8 +2321,8 @@ const AdminDashboard = () => {
                                 {request.status}
                               </span>
                             </td>
-                            <td className="px-4 py-4 text-sm text-gray-900 font-mono">
-                              {request.voucher_code || '-'}
+                            <td className={`px-4 py-4 text-sm text-gray-900 ${voucherFilter === 'rejected' ? '' : 'font-mono'}`}>
+                              {voucherFilter === 'rejected' ? (request.rejection_reason || '-') : (request.voucher_code || '-')}
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-900">
                               <div className="flex space-x-2">

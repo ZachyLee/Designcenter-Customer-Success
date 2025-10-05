@@ -651,8 +651,8 @@ router.put('/voucher-requests/:id/reject', adminAuth, async (req, res) => {
       return res.status(400).json({ error: 'Rejection reason cannot be empty' });
     }
 
-    if (reason.length > 24) {
-      return res.status(400).json({ error: 'Rejection reason must be 24 characters or less' });
+    if (reason.length > 36) {
+      return res.status(400).json({ error: 'Rejection reason must be 36 characters or less' });
     }
 
     const { data, error } = await supabaseAdmin
